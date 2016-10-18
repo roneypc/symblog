@@ -1,3 +1,12 @@
+# src/Blogger/BlogBundle/Resources/config/routing.yml
 BloggerBlogBundle_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: BloggerBlogBundle:Default:index }
+    path:  /
+    defaults: { _controller: BloggerBlogBundle:Page:index }
+    requirements:
+        methods:  GET
+
+BloggerBlogBundle_about:
+    path:  /about
+    defaults: { _controller: BloggerBlogBundle:Page:about }
+    requirements:
+        methods:  GET
