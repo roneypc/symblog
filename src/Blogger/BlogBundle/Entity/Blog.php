@@ -252,4 +252,8 @@ class Blog {
     public function getComments() {
         return $this->comments;
     }
+
+    public function __toString() {
+        return $this->getTitle();
+    }
 }

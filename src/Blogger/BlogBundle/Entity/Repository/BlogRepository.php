@@ -11,7 +11,10 @@ use Doctrine\ORM\EntityRepository;
  * repository methods below.
  */
 class BlogRepository extends EntityRepository {
-	
+
+	/*
+	Retorna todos los blogs ordenados por el más reciente
+	*/	
 	public function getLatestBlogs($limit = null) {
 		$qb = $this->createQueryBuilder('b') 
 				->select('b') 
