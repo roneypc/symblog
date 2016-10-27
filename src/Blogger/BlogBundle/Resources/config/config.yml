@@ -2,3 +2,5 @@
 parameters:
     # dirección de correo electrónico para contacto del Blogger
     blogger_blog.emails.contact_email: roneypc@gmail.com
+    # Blogger max latest comments
+    blogger_blog.comments.latest_comment_limit: 5

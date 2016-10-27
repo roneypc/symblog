@@ -14,29 +14,42 @@ use Doctrine\ORM\Query\ResultSetMapping;
 class CommentRepository extends EntityRepository {
 
 	public function getCommentsForBlog($blogId, $approved = true) {
-        $qb = $this->createQueryBuilder('c')
-           ->select('c')
-           ->where('c.blog = :blog_id')
-           //->andWhere("c.created>=CURRENT_DATE()")
-           //->andWhere("c.created<CURRENT_DATE()")
-           ->addOrderBy('c.created')
-           ->setParameter('blog_id', $blogId);
+    $qb = $this->createQueryBuilder('c')
+       ->select('c')
+       ->where('c.blog = :blog_id')
+       //->andWhere("c.created>=CURRENT_DATE()")
+       //->andWhere("c.created<CURRENT_DATE()")
+       ->addOrderBy('c.created')
+       ->setParameter('blog_id', $blogId);
 
-        if (false === is_null($approved))
-            $qb->andWhere('c.approved = :approved')
-               ->setParameter('approved', $approved);
+    if (false === is_null($approved))
+        $qb->andWhere('c.approved = :approved')
+           ->setParameter('approved', $approved);
 
-        return $qb->getQuery()->getResult();
-    }
+    return $qb->getQuery()->getResult();
+  }
 
-    /*
-    Nueva funcionalidad
-    */
-    public function getCommentsByUser() {
-		$rsm = new ResultSetMapping;
-		$sql = 'select user, count(id) as comments from comment where approved=1 group by user';
-		$query = $this->_em->createNativeQuery($sql, $rsm);
+  /*
+  Nueva funcionalidad
+  */
+  public function getCommentsByUser() {
+  	$rsm = new ResultSetMapping;
+  	$sql = 'select user, count(id) as comments from comment where approved=1 group by user';
+  	$query = $this->_em->createNativeQuery($sql, $rsm);
 
-		return $query->getResult();
-    }
+  	return $query->getResult();
+  }
+
+  public function getLatestComments($limit = 10) {
+    $qb = $this->createQueryBuilder('c')
+                ->select('c')
+                ->addOrderBy('c.id', 'DESC');
+    $qb->andWhere('c.approved = :approved')
+           ->setParameter('approved', true);
+
+    if (false === is_null($limit))
+        $qb->setMaxResults($limit);
+
+    return $qb->getQuery()->getResult();
+  }
 }

@@ -14,11 +14,18 @@ class PageController extends Controller {
 
 	public function indexAction() {
         $em = $this->getDoctrine()
-                   ->getEntityManager();
+                   ->getManager();
 
         // Recuperar el repositorio y llama al método getLatestBlogs
         $blogs = $em->getRepository('BloggerBlogBundle:Blog')
                     ->getLatestBlogs();
+
+		// Generar los slugs:
+/*		foreach ($blogs as $blog) {
+			$blog->setTitle($blog->getTitle());
+			$em->persist($blog);
+            $em->flush();
+		} */
 
         return $this->render('BloggerBlogBundle:Page:index.html.twig', array(
             'blogs' => $blogs
@@ -65,4 +72,25 @@ class PageController extends Controller {
 		'form' => $form->createView()
 		));
     }
+
+	public function sidebarAction() {
+	    $em = $this->getDoctrine()
+	               ->getManager();
+
+	    $tags = $em->getRepository('BloggerBlogBundle:Blog')
+	               ->getTags();
+
+	    $tagWeights = $em->getRepository('BloggerBlogBundle:Blog')
+	                     ->getTagWeights($tags);
+
+	    // Se recupera el parámetro del fichero /Resources/config/config.yml
+		$commentLimit   = $this->container->getParameter('blogger_blog.comments.latest_comment_limit');
+
+    	$latestComments = $em->getRepository('BloggerBlogBundle:Comment')->getLatestComments($commentLimit);
+
+		return $this->render('BloggerBlogBundle:Page:sidebar.html.twig', array(
+	        'latestComments'    => $latestComments,
+	        'tags'              => $tagWeights
+    	));
+	}
 }

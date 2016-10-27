@@ -51,6 +51,11 @@ class Blog {
     protected $tags;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    protected $slug;
+
+    /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="blog")
      */
     protected $comments;
@@ -82,6 +87,7 @@ class Blog {
      */
     public function setTitle($title) {
         $this->title = $title;
+        $this->setSlug($this->title);
         return $this;
     }
 
@@ -255,5 +261,50 @@ class Blog {
 
     public function __toString() {
         return $this->getTitle();
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return Blog
+     */
+    public function setSlug($slug) {
+        $this->slug = $this->slugify($slug);
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug() {
+        return $this->slug;
+    }
+
+    public function slugify($text) {
+        // sustituye caracteres de espaciado o dígitos con un -
+        $text = preg_replace('#[^\\pL\d]+#u', '-', $text);
+
+        // recorta espacios en ambos extremos
+        $text = trim($text, '-');
+
+        // translitera
+        if (function_exists('iconv')) {
+            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        }
+
+        // cambia a minúsculas
+        $text = strtolower($text);
+
+        // elimina caracteres indeseables
+        $text = preg_replace('#[^-\w]+#', '', $text);
+
+        if (empty($text)) {
+            return 'n-a';
+        }
+
+        return $text;
     }
 }
